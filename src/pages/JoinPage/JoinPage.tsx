@@ -1,3 +1,4 @@
+import React from 'react';
 import { JoinGame } from '../../components/Poker/JoinGame/JoinGame';
 
 export const JoinPage = () => {

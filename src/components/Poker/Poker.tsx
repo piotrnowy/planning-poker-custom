@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { streamGame, streamPlayers } from '../../service/games';
 import { getCurrentPlayerId } from '../../service/players';

@@ -1,32 +1,66 @@
-import 'firebase/analytics';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import { Game } from '../types/game';
 import { Player } from '../types/player';
 
+const isUsingEmulator = process.env.VITE_USE_FIRESTORE_EMULATOR === 'true';
+const isOfflineMode = process.env.VITE_OFFLINE_MODE === 'true';
+
 const firebaseConfig = {
-  apiKey: process.env.VITE_FB_API_KEY,
-  authDomain: process.env.VITE_FB_AUTH_DOMAIN,
-  projectId: process.env.VITE_FB_PROJECT_ID,
-  storageBucket: process.env.VITE_FB_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FB_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FB_APP_ID,
+  apiKey: process.env.VITE_FB_API_KEY || 'demo-api-key',
+  authDomain: process.env.VITE_FB_AUTH_DOMAIN || 'demo.firebaseapp.com',
+  projectId: process.env.VITE_FB_PROJECT_ID || 'demo-project',
+  storageBucket: process.env.VITE_FB_STORAGE_BUCKET || 'demo.appspot.com',
+  messagingSenderId: process.env.VITE_FB_MESSAGING_SENDER_ID || '123456789',
+  appId: process.env.VITE_FB_APP_ID || '1:123456789:web:abcdef',
   measurementId: process.env.VITE_FB_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase only if not in offline mode
+let db: firebase.firestore.Firestore;
+
+if (!isOfflineMode) {
+  // Initialize Firebase
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  // Only import and use analytics if not using emulator AND measurementId is provided
+  if (!isUsingEmulator && firebaseConfig.measurementId && firebaseConfig.measurementId !== '1234') {
+    import('firebase/analytics')
+      .then(() => {
+        try {
+          firebase.analytics();
+          console.log('Firebase Analytics initialized');
+        } catch (error) {
+          console.log('Analytics initialization skipped:', error);
+        }
+      })
+      .catch((error) => {
+        console.log('Analytics module not available:', error);
+      });
+  }
+
+  db = firebase.firestore();
+
+  // Use Firestore Emulator if the environment variable is set
+  if (isUsingEmulator) {
+    console.log('Using Firestore Emulator');
+    // application host name
+    const emulatorHost = window.location.hostname;
+    db.useEmulator(emulatorHost, 8080); // Point to the Firestore Emulator
+    console.log(`Firestore emulator configured at ${emulatorHost}:8080`);
+  } else {
+    db.settings({ experimentalAutoDetectLongPolling: true });
+  }
+} else {
+  console.log('Running in OFFLINE MODE - Firebase disabled, using localStorage only');
+  // Create a mock db object to prevent errors
+  db = {} as firebase.firestore.Firestore;
+}
+
 const gamesCollectionName = 'games';
 const playersCollectionName = 'players';
-const db = firebase.firestore();
-db.settings({ experimentalAutoDetectLongPolling: true });
-// Use Firestore Emulator if the environment variable is set
-if (process.env.VITE_USE_FIRESTORE_EMULATOR === 'true') {
-  console.log('Using Firestore Emulator');
-  // application host name
-  const emulatorHost = window.location.hostname;
-  db.useEmulator(emulatorHost, 8080); // Point to the Firestore Emulator
-}
 
 export const addGameToStore = async (gameId: string, data: any) => {
   await db.collection(gamesCollectionName).doc(gameId).set(data);

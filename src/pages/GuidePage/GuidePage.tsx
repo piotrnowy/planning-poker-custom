@@ -1,3 +1,4 @@
+import React from 'react';
 import { GoogleAd } from '../../components/GoogleAd/GoogleAd';
 
 export const GuidePage = () => {

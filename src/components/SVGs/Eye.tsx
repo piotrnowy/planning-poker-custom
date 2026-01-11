@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const EyeSVG: React.FC<React.SVGProps<SVGSVGElement>> = ({ className }) => {
   return (
     <svg

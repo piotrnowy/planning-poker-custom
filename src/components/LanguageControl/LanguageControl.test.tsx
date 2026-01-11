@@ -1,3 +1,4 @@
+import React from 'react';
 import '@testing-library/jest-dom'; // for extended matchers
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { LanguageControl } from './LanguageControl';

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Divider } from '../../components/Divider/Divider';
 import { GoogleAd } from '../../components/GoogleAd/GoogleAd';
 import { BenefitsSVG } from '../../components/SVGs/Benefits';

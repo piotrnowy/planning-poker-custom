@@ -1,7 +1,6 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GamesSVG } from '../SVGs/GamesSVG';
-
-import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useBreakpoint } from '../../hooks/useBreakpoint';
 import { LanguageControl } from '../LanguageControl/LanguageControl';

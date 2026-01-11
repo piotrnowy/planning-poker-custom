@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const ExitSVG: React.FC<React.SVGProps<SVGSVGElement>> = ({ className }) => {
   return (
     <svg

@@ -8,7 +8,13 @@ delete process.env['ProgramFiles(x86)'];
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/',
-  plugins: [react(), tailwindcss(), EnvironmentPlugin('all')],
+  plugins: [
+    react({
+      jsxRuntime: 'classic',
+    }),
+    tailwindcss(),
+    EnvironmentPlugin('all'),
+  ],
   build: {
     outDir: 'build',
   },

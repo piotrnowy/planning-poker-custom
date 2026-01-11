@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const TrashSVG: React.FC<React.SVGProps<SVGSVGElement>> = ({ className }) => {
   return (
     <svg

@@ -1,3 +1,4 @@
+import React from 'react';
 import { CopyrightSVG } from '../SVGs/CopyrightSVG';
 
 export const Footer = () => {

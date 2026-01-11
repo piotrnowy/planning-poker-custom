@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const ExamplesPage = () => {
   return (
     <div className='flex flex-col items-center w-full'>

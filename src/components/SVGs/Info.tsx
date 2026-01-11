@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const InfoSVG = ({ className = 'h-5 w-5' }) => {
   return (
     <svg

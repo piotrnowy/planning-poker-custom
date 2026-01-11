@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { deleteOldGames } from '../../service/games';
 
 export const DeleteOldGames = () => {

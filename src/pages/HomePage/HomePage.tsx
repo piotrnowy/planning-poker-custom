@@ -1,3 +1,4 @@
+import React, { HTMLAttributes, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useRouteMatch } from 'react-router-dom';
@@ -30,8 +31,6 @@ export const HomePage = () => {
     </>
   );
 };
-
-import { HTMLAttributes, ReactNode } from 'react';
 
 type SectionProps = {
   children: ReactNode;

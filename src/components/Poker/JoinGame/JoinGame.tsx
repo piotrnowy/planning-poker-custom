@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { getGame } from '../../../service/games';
 import { addPlayerToGame, isCurrentPlayerInGame } from '../../../service/players';
