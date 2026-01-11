@@ -1,5 +1,4 @@
 import React, { FormEvent, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { animals, colors, Config, starWars, uniqueNamesGenerator } from 'unique-names-generator';
 import { addNewGame } from '../../../service/games';
@@ -27,7 +26,6 @@ export const CreateGame = () => {
   const [allowMembersToManageSession, setAllowMembersToManageSession] = useState(false);
   const [customOptions, setCustomOptions] = React.useState(Array(15).fill(''));
   const [error, setError] = React.useState(false);
-  const { t } = useTranslation();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -83,12 +81,12 @@ export const CreateGame = () => {
     <form onSubmit={handleSubmit} className='w-full flex justify-center'>
       <div className='w-full max-w-lg border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg p-6 mt-6'>
         <h2 className='text-2xl font-semibold mb-4 text-center'>
-          {t('CreateGame.newSessionHeader')}
+          New Session
         </h2>
         <div className='flex flex-col gap-4'>
           <div>
             <label className='block text-sm font-medium mb-1'>
-              {t('CreateGame.sessionNameLabel')}
+              Session Name
             </label>
             <input
               required
@@ -102,7 +100,7 @@ export const CreateGame = () => {
           </div>
           <div>
             <label className='block text-sm font-medium mb-1'>
-              {t('CreateGame.yourNameLabel')}
+              Your Name
             </label>
             <input
               required
@@ -116,15 +114,15 @@ export const CreateGame = () => {
           </div>
           <fieldset>
             <legend className='block text-sm font-medium mb-2'>
-              {t('CreateGame.sessionSizingType')}
+              Sizing Type
             </legend>
             <div className='flex flex-col gap-2'>
               {[
-                { type: GameType.Fibonacci, label: t('CreateGame.fibonacci') },
-                { type: GameType.ShortFibonacci, label: t('CreateGame.shortFibonacci') },
-                { type: GameType.TShirt, label: t('CreateGame.tShirt') },
-                { type: GameType.TShirtAndNumber, label: t('CreateGame.tShirtAndNumber') },
-                { type: GameType.Custom, label: t('CreateGame.custom') },
+                { type: GameType.Fibonacci, label: 'Fibonacci (0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ?, ☕)' },
+                { type: GameType.ShortFibonacci, label: 'Short Fibonacci (0, 1, 2, 3, 5, 8, 13, ?, ☕)' },
+                { type: GameType.TShirt, label: 'T-Shirt (XXS, XS, S, M, L, XL, XXL, ?, ☕)' },
+                { type: GameType.TShirtAndNumber, label: 'T-Shirt and Number (1, 2, 3, S, M, L, XL, ?, ☕)' },
+                { type: GameType.Custom, label: 'Custom' },
               ].map(({ type, label }) => (
                 <label key={type} className='inline-flex items-center'>
                   <input
@@ -156,7 +154,7 @@ export const CreateGame = () => {
                 ))}
               </div>
               {error && (
-                <p className='text-red-600 text-xs mt-1'>{t('CreateGame.pleaseEnterValues')}</p>
+                <p className='text-red-600 text-xs mt-1'>Please enter at least 2 values</p>
               )}
             </>
           )}
@@ -167,7 +165,7 @@ export const CreateGame = () => {
               checked={allowMembersToManageSession}
               onChange={() => setAllowMembersToManageSession(!allowMembersToManageSession)}
             />
-            <span className='ml-2'>{t('CreateGame.allowMembersToManageSession')}</span>
+            <span className='ml-2'>Allow members to manage session</span>
           </label>
         </div>
         <div className='flex justify-end mt-6'>
@@ -179,7 +177,7 @@ export const CreateGame = () => {
             disabled={loading}
             data-testid='loading'
           >
-            {loading ? t('CreateGame.creating') : t('CreateGame.create')}
+            {loading ? 'Creating...' : 'Create'}
           </button>
         </div>
       </div>
