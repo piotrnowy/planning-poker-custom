@@ -14,6 +14,6 @@ jest.mock('country-flag-emoji-polyfill', () => ({
 describe('App', () =>
   it('Should display toolbar with header', () => {
     render(<App />);
-    const toolBarHeader = screen.getByText('Planning Poker');
+    const toolBarHeader = screen.getByRole('button', { name: 'Planning Poker' });
     expect(toolBarHeader).toBeInTheDocument();
   }));

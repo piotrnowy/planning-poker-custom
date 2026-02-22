@@ -133,7 +133,7 @@ describe('GameController component', () => {
         players={mockPlayers}
       />,
     );
-    const input = screen.getByPlaceholderText('Enter story name or number') as HTMLInputElement;
+    const input = screen.getByPlaceholderText('Enter story name') as HTMLInputElement;
     userEvent.type(input, 'n');
     expect(gamesService.updateStoryName).toHaveBeenCalledWith(mockGame.id, 'testStoryn');
   });

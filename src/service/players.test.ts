@@ -105,6 +105,7 @@ describe('Players service', () => {
       const spyGame = jest.spyOn(games, 'updateGameStatus');
       const emoji = 'emeowticon';
       jest.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(mockPlayer);
+      jest.spyOn(fb, 'getGameFromStore').mockResolvedValueOnce(mockGame);
 
       await updatePlayerValue(mockGame.id, mockPlayer.id, 3, emoji);
 
@@ -113,6 +114,83 @@ describe('Players service', () => {
         expect.objectContaining({ value: 3, emoji }),
       );
       expect(spyGame).toHaveBeenCalledWith(mockGame.id);
+    });
+
+    it('should not update game status when game is already finished', async () => {
+      const spyPlayer = jest.spyOn(fb, 'updatePlayerInStore');
+      const spyGame = jest.spyOn(games, 'updateGameStatus');
+      const emoji = 'emeowticon';
+      jest.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(mockPlayer);
+      jest
+        .spyOn(fb, 'getGameFromStore')
+        .mockResolvedValueOnce({ ...mockGame, gameStatus: Status.Finished } as Game);
+
+      await updatePlayerValue(mockGame.id, mockPlayer.id, 3, emoji);
+
+      expect(spyPlayer).toHaveBeenCalledWith(
+        mockGame.id,
+        expect.objectContaining({ value: 3, emoji }),
+      );
+      expect(spyGame).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not update vote after reveal when vote update flag is disabled', async () => {
+      const spyPlayer = jest.spyOn(fb, 'updatePlayerInStore');
+      const spyGame = jest.spyOn(games, 'updateGameStatus');
+      const finishedPlayer = {
+        ...mockPlayer,
+        status: Status.Finished,
+        value: 2,
+      };
+
+      jest.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(finishedPlayer);
+      jest
+        .spyOn(fb, 'getGameFromStore')
+        .mockResolvedValueOnce({
+          ...mockGame,
+          gameStatus: Status.Finished,
+          allowVoteUpdateAfterReveal: false,
+        } as Game);
+
+      const result = await updatePlayerValue(mockGame.id, mockPlayer.id, 5, 'new-emoji');
+
+      expect(result).toBe(false);
+      expect(spyPlayer).toHaveBeenCalledTimes(0);
+      expect(spyGame).toHaveBeenCalledTimes(0);
+    });
+
+    it('should keep first estimation and store updated vote when changing after reveal', async () => {
+      const spyPlayer = jest.spyOn(fb, 'updatePlayerInStore');
+      const spyGame = jest.spyOn(games, 'updateGameStatus');
+      const emoji = 'updated-emoji';
+      const finishedPlayer = {
+        ...mockPlayer,
+        status: Status.Finished,
+        value: 2,
+        emoji: 'initial-emoji',
+      };
+
+      jest.spyOn(fb, 'getPlayerFromStore').mockResolvedValueOnce(finishedPlayer);
+      jest
+        .spyOn(fb, 'getGameFromStore')
+        .mockResolvedValueOnce({
+          ...mockGame,
+          gameStatus: Status.Finished,
+          allowVoteUpdateAfterReveal: true,
+        } as Game);
+
+      await updatePlayerValue(mockGame.id, mockPlayer.id, 5, emoji);
+
+      expect(spyPlayer).toHaveBeenCalledWith(
+        mockGame.id,
+        expect.objectContaining({
+          value: 2,
+          emoji: 'initial-emoji',
+          updatedValue: 5,
+          updatedEmoji: emoji,
+        }),
+      );
+      expect(spyGame).toHaveBeenCalledTimes(0);
     });
 
     // NOTE: Shouldn't there be a case that the player doesn't get updated if the game doesn't exist? Fn doesn't have that logix
@@ -416,9 +494,30 @@ describe('Players service', () => {
         { id: 'three', name: 'carrot', status: Status.Started, value: 3 },
       ];
       const expectedPlayers = [
-        { id: 'one', name: 'potato', status: Status.NotStarted, value: 0 },
-        { id: 'two', name: 'pea', status: Status.NotStarted, value: 0 },
-        { id: 'three', name: 'carrot', status: Status.NotStarted, value: 0 },
+        {
+          id: 'one',
+          name: 'potato',
+          status: Status.NotStarted,
+          value: 0,
+          updatedValue: null,
+          updatedEmoji: null,
+        },
+        {
+          id: 'two',
+          name: 'pea',
+          status: Status.NotStarted,
+          value: 0,
+          updatedValue: null,
+          updatedEmoji: null,
+        },
+        {
+          id: 'three',
+          name: 'carrot',
+          status: Status.NotStarted,
+          value: 0,
+          updatedValue: null,
+          updatedEmoji: null,
+        },
       ];
       const gId = 'soup';
       jest.spyOn(fb, 'getPlayersFromStore').mockResolvedValueOnce(fakePlayers);

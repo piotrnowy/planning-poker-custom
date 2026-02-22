@@ -75,6 +75,25 @@ describe('PlayerCard component', () => {
 
     expect(screen.getByText('5')).toBeInTheDocument();
   });
+  it('should keep first estimation and show updated vote badge after reveal', () => {
+    const playerWithUpdatedVote = {
+      ...mockPlayer,
+      status: Status.Finished,
+      value: 2,
+      updatedValue: 3,
+    };
+    const finishedGame = { ...mockGame, gameStatus: Status.Finished };
+    render(
+      <PlayerCard
+        game={finishedGame}
+        player={playerWithUpdatedVote}
+        currentPlayerId={mockCurrentPlayerId}
+      />,
+    );
+
+    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByTestId('updated-vote-badge')).toHaveTextContent('3');
+  });
   it('should display thinking emoji when Player has not voted and Game is finished', () => {
     const coffeePlayer = { ...mockPlayer, status: Status.InProgress };
     const finishedGame = { ...mockGame, gameStatus: Status.Finished };

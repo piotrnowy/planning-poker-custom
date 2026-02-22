@@ -14,10 +14,15 @@ interface CardPickerProps {
 
 export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPlayerId }) => {
   const [randomEmoji, setRandomEmoji] = useState(getRandomEmoji);
+  const isVoteUpdateAllowedAfterReveal = game.allowVoteUpdateAfterReveal === true;
+  const isCardInteractionDisabled =
+    game.gameStatus === Status.Finished && !isVoteUpdateAllowedAfterReveal;
+
   const playPlayer = (gameId: string, playerId: string, card: CardConfig) => {
-    if (game.gameStatus !== Status.Finished) {
-      updatePlayerValue(gameId, playerId, card.value, randomEmoji);
+    if (isCardInteractionDisabled) {
+      return;
     }
+    updatePlayerValue(gameId, playerId, card.value, randomEmoji);
   };
 
   useEffect(() => {
@@ -31,13 +36,16 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
   return (
     <div className='w-full max-w-full animate-fade-in-down'>
       <div className='text-center text-lg font-semibold my-4'>
-        {game.gameStatus !== Status.Finished
-          ? 'Click on a card to vote'
-          : 'Session finished. Wait for moderator to start a new round.'}
+        Click on a card to vote
       </div>
       <div className='flex flex-wrap justify-center gap-6 py-4 '>
         {cards.map((card: CardConfig, index) => {
-          const isSelected = players.find((p) => p.id === currentPlayerId)?.value === card.value;
+          const currentPlayer = players.find((p) => p.id === currentPlayerId);
+          const selectedValue =
+            game.gameStatus === Status.Finished && typeof currentPlayer?.updatedValue === 'number'
+              ? currentPlayer.updatedValue
+              : currentPlayer?.value;
+          const isSelected = selectedValue === card.value;
           return (
             <div
               key={card.value}
@@ -57,11 +65,8 @@ export const CardPicker: React.FC<CardPickerProps> = ({ game, players, currentPl
                   ? 'border-dashed border-2 border-gray-800 z-10 shadow-lg scale-115'
                   : 'shadow-md scale-100'
               }
-              ${
-                game.gameStatus === Status.Finished
-                  ? 'pointer-events-none opacity-50 cursor-not-allowed'
-                  : ''
-              }
+              ${isCardInteractionDisabled ? 'pointer-events-none opacity-50 cursor-not-allowed' : ''}
+              
             `}
               style={{
                 backgroundColor: card.color,

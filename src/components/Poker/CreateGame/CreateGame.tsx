@@ -24,6 +24,7 @@ export const CreateGame = () => {
   const [hasDefaults, setHasDefaults] = useState({ game: true, name: true });
   const [loading, setLoading] = useState(false);
   const [allowMembersToManageSession, setAllowMembersToManageSession] = useState(false);
+  const [allowVoteUpdateAfterReveal, setAllowVoteUpdateAfterReveal] = useState(false);
   const [customOptions, setCustomOptions] = React.useState(Array(15).fill(''));
   const [error, setError] = React.useState(false);
 
@@ -45,6 +46,7 @@ export const CreateGame = () => {
       createdBy: createdBy,
       gameType: gameType,
       isAllowMembersToManageSession: allowMembersToManageSession,
+      allowVoteUpdateAfterReveal: allowVoteUpdateAfterReveal,
       cards: gameType === GameType.Custom ? getCustomCards(customOptions) : getCards(gameType),
       createdAt: new Date(),
     };
@@ -166,6 +168,15 @@ export const CreateGame = () => {
               onChange={() => setAllowMembersToManageSession(!allowMembersToManageSession)}
             />
             <span className='ml-2'>Allow members to manage session</span>
+          </label>
+          <label className='inline-flex items-center mt-2'>
+            <input
+              type='checkbox'
+              className='form-checkbox text-blue-600'
+              checked={allowVoteUpdateAfterReveal}
+              onChange={() => setAllowVoteUpdateAfterReveal(!allowVoteUpdateAfterReveal)}
+            />
+            <span className='ml-2'>Allow vote update after reveal</span>
           </label>
         </div>
         <div className='flex justify-end mt-6'>

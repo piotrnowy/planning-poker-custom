@@ -146,7 +146,7 @@ describe('CardPicker component', () => {
     expect(updatePlayerValueSpy).toHaveBeenCalledWith(mockGame.id, currentPlayerId, 1, 'something');
   });
 
-  it('should not update player value when player clicks on a card and game is finished', () => {
+  it('should not update player value when player clicks on a card and game is finished by default', () => {
     const currentPlayerId = mockPlayers[0].id;
     jest.resetAllMocks();
     const updatePlayerValueSpy = jest.spyOn(playersService, 'updatePlayerValue');
@@ -165,15 +165,39 @@ describe('CardPicker component', () => {
     userEvent.click(cardValueElement[0]);
     expect(updatePlayerValueSpy).toHaveBeenCalledTimes(0);
   });
+
+  it('should update player value when player clicks on a card and game is finished with update flag enabled', () => {
+    const currentPlayerId = mockPlayers[0].id;
+    jest.resetAllMocks();
+    const updatePlayerValueSpy = jest.spyOn(playersService, 'updatePlayerValue');
+    const finishedGameMock = {
+      ...mockGame,
+      gameStatus: Status.Finished,
+      allowVoteUpdateAfterReveal: true,
+    };
+    render(
+      <CardPicker
+        game={finishedGameMock}
+        players={mockPlayers}
+        currentPlayerId={currentPlayerId}
+      />,
+    );
+    const cardValueElement = screen.queryAllByText(1);
+    userEvent.click(cardValueElement[0]);
+    expect(updatePlayerValueSpy).toHaveBeenCalled();
+    expect(updatePlayerValueSpy.mock.calls[0][0]).toBe(finishedGameMock.id);
+    expect(updatePlayerValueSpy.mock.calls[0][1]).toBe(currentPlayerId);
+    expect(updatePlayerValueSpy.mock.calls[0][2]).toBe(1);
+  });
   it('should display Click on the card to vote when game is not finished', () => {
     const currentPlayerId = mockPlayers[0].id;
 
     render(<CardPicker game={mockGame} players={mockPlayers} currentPlayerId={currentPlayerId} />);
-    const helperText = screen.getByText('Click on the card to vote');
+    const helperText = screen.getByText('Click on a card to vote');
 
     expect(helperText).toBeInTheDocument();
   });
-  it('should display wait message to vote when game is finished', () => {
+  it('should display Click on the card to vote when game is finished', () => {
     const currentPlayerId = mockPlayers[0].id;
     const finishedGameMock = {
       ...mockGame,
@@ -186,9 +210,7 @@ describe('CardPicker component', () => {
         currentPlayerId={currentPlayerId}
       />,
     );
-    const helperText = screen.getByText(
-      'Session not ready for Voting! Wait for moderator to start',
-    );
+    const helperText = screen.getByText('Click on a card to vote');
 
     expect(helperText).toBeInTheDocument();
   });

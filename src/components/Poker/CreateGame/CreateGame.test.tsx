@@ -86,6 +86,7 @@ describe('CreateGame component', () => {
         gameType: 'Fibonacci',
         name: 'Marvels',
         isAllowMembersToManageSession: false,
+        allowVoteUpdateAfterReveal: false,
       }),
     );
   });
@@ -102,6 +103,9 @@ describe('CreateGame component', () => {
     const allowMembersToManageSession = screen.getByText('Allow members to manage session');
     userEvent.click(allowMembersToManageSession);
 
+    const allowVoteUpdateAfterReveal = screen.getByText('Allow vote update after reveal');
+    userEvent.click(allowVoteUpdateAfterReveal);
+
     const createButton = screen.getByText('Create');
     userEvent.click(createButton);
 
@@ -113,6 +117,7 @@ describe('CreateGame component', () => {
         gameType: 'Fibonacci',
         name: 'Marvels',
         isAllowMembersToManageSession: true,
+        allowVoteUpdateAfterReveal: true,
       }),
     );
   });
@@ -126,7 +131,9 @@ describe('CreateGame component', () => {
     userEvent.clear(userName);
     userEvent.type(userName, 'Rock');
 
-    const tShirt = screen.getByText('T-Shirt (XXS, XS, S, M, L, XL, XXL)', { exact: false });
+    const tShirt = screen.getByText('T-Shirt (XXS, XS, S, M, L, XL, XXL, ?, ☕)', {
+      exact: false,
+    });
     userEvent.click(tShirt);
 
     const createButton = screen.getByText('Create');
@@ -170,7 +177,7 @@ describe('CreateGame component', () => {
     userEvent.clear(userName);
     userEvent.type(userName, 'Rock');
 
-    const tShirt = screen.getByText('T-Shirt & Numbers (S, M, L, XL, 1, 2, 3, 4, 5)', {
+    const tShirt = screen.getByText('T-Shirt and Number (1, 2, 3, S, M, L, XL, ?, ☕)', {
       exact: false,
     });
     userEvent.click(tShirt);

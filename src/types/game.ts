@@ -10,6 +10,7 @@ export interface Game {
   isAllowMembersToManageSession?: boolean;
   storyName?: string;
   autoReveal?: boolean;
+  allowVoteUpdateAfterReveal?: boolean;
   cards: CardConfig[];
   createdBy: string;
   createdById: string;
@@ -22,6 +23,7 @@ export interface NewGame {
   gameType: string;
   cards: CardConfig[];
   isAllowMembersToManageSession?: boolean;
+  allowVoteUpdateAfterReveal?: boolean;
   createdBy: string;
   createdAt: Date;
 }

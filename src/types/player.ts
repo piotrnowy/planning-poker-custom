@@ -6,6 +6,8 @@ export interface Player {
   status: Status;
   value?: number;
   emoji?: string;
+  updatedValue?: number | null;
+  updatedEmoji?: string | null;
 }
 
 export interface PlayerGame {

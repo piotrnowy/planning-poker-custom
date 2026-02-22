@@ -20,11 +20,19 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ game, player, currentPla
 
   return (
     <div
-      className='rounded shadow-lg w-25 bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-600 border mb-2 m-3'
+      className='rounded shadow-lg w-25 bg-gray-200 dark:bg-gray-800 border-gray-300 dark:border-gray-600 border mb-2 m-3 relative'
       style={{
         backgroundColor: getCardColor(game, player.value),
       }}
     >
+      {hasUpdatedVote(player, game) && (
+        <div
+          className='absolute top-1 right-1 min-w-[38px] px-1.5 py-1 rounded-md text-xl font-bold bg-white/90 dark:bg-gray-900/90 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 z-10 text-center'
+          data-testid='updated-vote-badge'
+        >
+          {getUpdatedCardValue(player, game)}
+        </div>
+      )}
       <div className='text-center -mt-5 mx-auto w-[95%] bg-white dark:bg-gray-900 border-2  border-gray-400 dark:border-gray-700 rounded-2xl flex items-center justify-around px-3 py-1'>
         <div className='text-center font-semibold text-sm truncate' title={player.name}>
           {player.name}
@@ -80,4 +88,22 @@ const getCardDisplayValue = (game: Game, cardValue: number | undefined): string 
   return (
     cards.find((card) => card.value === cardValue)?.displayValue || cardValue?.toString() || ''
   );
+};
+
+const hasUpdatedVote = (player: Player, game: Game): boolean => {
+  return (
+    game.gameStatus === Status.Finished &&
+    player.status === Status.Finished &&
+    typeof player.updatedValue === 'number'
+  );
+};
+
+const getUpdatedCardValue = (player: Player, game: Game): string => {
+  if (typeof player.updatedValue !== 'number') {
+    return '';
+  }
+  if (player.updatedValue === -1) {
+    return player.updatedEmoji || '☕';
+  }
+  return getCardDisplayValue(game, player.updatedValue);
 };

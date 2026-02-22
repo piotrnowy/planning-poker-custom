@@ -27,16 +27,36 @@ export const removePlayer = async (gameId: string, playerId: string) => {
 };
 export const updatePlayerValue = async (gameId: string, playerId: string, value: number, randomEmoji: string) => {
   const player = await getPlayerFromStore(gameId, playerId);
+  const game = await getGameFromStore(gameId);
 
-  if (player) {
-    const updatedPlayer = {
-      ...player,
-      value: value,
-      emoji: randomEmoji,
-      status: Status.Finished,
-    };
+  if (player && game) {
+    const isUpdatingAfterReveal = game.gameStatus === Status.Finished && player.status === Status.Finished;
+
+    if (isUpdatingAfterReveal && !game.allowVoteUpdateAfterReveal) {
+      return false;
+    }
+
+    const updatedPlayer = isUpdatingAfterReveal
+      ? {
+          ...player,
+          updatedValue: value,
+          updatedEmoji: randomEmoji,
+        }
+      : {
+          ...player,
+          value: value,
+          emoji: randomEmoji,
+          status: Status.Finished,
+          updatedValue: null,
+          updatedEmoji: null,
+        };
+
     await updatePlayerInStore(gameId, updatedPlayer);
-    await updateGameStatus(gameId);
+
+    if (game.gameStatus !== Status.Finished) {
+      await updateGameStatus(gameId);
+    }
+
     return true;
   }
   return false;
@@ -118,6 +138,8 @@ export const resetPlayers = async (gameId: string) => {
       ...player,
       status: Status.NotStarted,
       value: 0,
+      updatedValue: null,
+      updatedEmoji: null,
     };
     await updatePlayerInStore(gameId, updatedPlayer);
   });
